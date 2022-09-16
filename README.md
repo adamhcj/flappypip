@@ -3,7 +3,8 @@
 A new Flutter project. Trying out flutter with flame.
 
 ## What it currently is:
-Plays pokemon music onload,
-has a piplup sprite that says "piplup!" when you tap it.
+A music button that plays pokemon music<br>
+Has a piplup sprite that says "piplup!" when you tap it.<br>
+The piplup object has gravity properties and can jump when tapped.<br>
 
 
