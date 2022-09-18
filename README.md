@@ -5,7 +5,7 @@ A new Flutter project. Trying out flutter with flame.
 ## Demo:
 
 
-
+Play this video to see a demo of my flutter app! 
 https://user-images.githubusercontent.com/82926705/190911315-3610f2a2-c007-4e64-b6cb-d15b9acaa061.mp4
 
 
