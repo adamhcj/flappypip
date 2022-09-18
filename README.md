@@ -4,7 +4,11 @@ A new Flutter project. Trying out flutter with flame.
 
 ## Demo:
 
-https://user-images.githubusercontent.com/82926705/190669742-bac32bfe-55c2-4d92-8ec6-07c60f239408.mp4
+
+
+https://user-images.githubusercontent.com/82926705/190911315-3610f2a2-c007-4e64-b6cb-d15b9acaa061.mp4
+
+
 
 
 
