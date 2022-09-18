@@ -6,6 +6,7 @@ A new Flutter project. Trying out flutter with flame.
 
 
 Play this video to see a demo of my flutter app! <br>
+Turn on sounds! <br>
 
 
 
