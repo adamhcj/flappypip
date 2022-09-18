@@ -5,8 +5,13 @@ A new Flutter project. Trying out flutter with flame.
 ## Demo:
 
 
-Play this video to see a demo of my flutter app! 
-https://user-images.githubusercontent.com/82926705/190911315-3610f2a2-c007-4e64-b6cb-d15b9acaa061.mp4
+Play this video to see a demo of my flutter app! <br>
+
+
+
+
+https://user-images.githubusercontent.com/82926705/190911626-eb7f0555-c8a1-4b2c-acf4-f09f42313f29.mp4
+
 
 
 
