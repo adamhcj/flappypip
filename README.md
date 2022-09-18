@@ -2,6 +2,10 @@
 
 A new Flutter project. Trying out flutter with flame.
 
+#Now hosted on my personal github pages! 
+<p>(sounds may need time to cache, so play around abit and wait for sounds to load. The piplup button at the top right is the play music button. (currently only play music, no pause function.)</p>
+<a href='https://piplupowo.github.io/flappypipweb/'>https://piplupowo.github.io/flappypipweb/</a>
+
 ## Demo:
 
 
@@ -19,7 +23,7 @@ https://user-images.githubusercontent.com/82926705/190911626-eb7f0555-c8a1-4b2c-
 
 
 ## What it currently is:
-A music button that plays pokemon music<br>
+A music button that plays pokemon music (now it is in the form of a piplup button at the top right corner)<br>
 Has a piplup sprite that says "piplup!" when you tap it.<br>
 The piplup object has gravity properties and can jump when tapped.<br>
 
