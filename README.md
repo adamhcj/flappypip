@@ -3,7 +3,7 @@
 A new Flutter project. Trying out flutter with flame.
 
 # Now hosted on my personal github pages! 
-<p>(sounds may need time to cache, so play around abit and wait for sounds to load. The piplup button at the top right is the play music button. (currently only play music, no pause function.)</p>
+
 <a href='https://piplupowo.github.io/flappypipweb/'>https://piplupowo.github.io/flappypipweb/</a>
 
 ## Demo:
