@@ -1,6 +1,10 @@
+import 'dart:math';
+
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/experimental.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_audio/flame_audio.dart';
@@ -8,10 +12,14 @@ import 'package:flutter/widgets.dart';
 import 'dart:ui' hide TextStyle;
 
 
-class MyGame extends FlameGame with SingleGameInstance, HasTappables, HasCollisionDetection{
+class MyGame extends FlameGame with SingleGameInstance, HasTappables, HasCollisionDetection {
   MyPlayer player = MyPlayer();
+  Wall wall1 = Wall();
+  int score = 0;
+
   double gravity = 4;
   late TextComponent musicText;
+  late TextComponent scoreText;
 
   final style = TextStyle(color: BasicPalette.white.color);
   final regular = TextPaint(style: TextStyle(color: BasicPalette.red.color, fontSize: 20));
@@ -28,7 +36,10 @@ class MyGame extends FlameGame with SingleGameInstance, HasTappables, HasCollisi
     musicText.y = 64.0;
     musicText.anchor = Anchor.center;
 
+    scoreText = TextComponent(text: 'Score: $score', textRenderer: regular);
+
     add(musicText);
+    add(scoreText);
 
     await FlameAudio.audioCache.load('diamondpokecenter.wav');
     await FlameAudio.audioCache.load('diamondroute101.wav');
@@ -42,9 +53,19 @@ class MyGame extends FlameGame with SingleGameInstance, HasTappables, HasCollisi
     add(player); // Adds the component
 
     musicBtn musicbtn = musicBtn();
+    musicbtn.width = 64;
+    musicbtn.height = 64;
     musicbtn.position = Vector2(size[0] - musicbtn.width, 0);
+
     musicBtn.musicText = musicText;
     add(musicbtn);
+
+
+    wall1.position = Vector2(450, -100);
+    // wall1.topWall.size = Vector2(size[0] / 10, size[1]/2);
+    // wall1.botWall.size = Vector2(size[0] / 10, size[1]/2);
+    wall1.gap = 700;
+    add(wall1);
 
     // MyComponent myComponent = MyComponent();
     // add(myComponent);
@@ -60,33 +81,135 @@ class MyGame extends FlameGame with SingleGameInstance, HasTappables, HasCollisi
         player.velocity.y = 0;
       }
       player.position.y += player.velocity.y * dt;
+      score = 0;
+      scoreText.text = 'Score: $score';
     } else {
       player.velocity.y += gravity;
       player.position.y += player.velocity.y * dt;
     }
 
+    if (wall1.position.x < -600) {
+      wall1.position.x = size[0];
+      int myint = (size.y * 0.5).toInt();
+      wall1.position.y =  -100 - Random().nextInt(myint).toDouble();
+      score++;
+      scoreText.text = 'Score: $score';
+    } else {
+      wall1.position.x -= 200 * dt;
+
+    }
+
+
   }
 
 }
 
-class MyPlayer extends SpriteComponent with Tappable{
+class MyPlayer extends SpriteComponent with Tappable, HasGameRef<MyGame>, CollisionCallbacks {
   Vector2 velocity = Vector2(0, 0);
   double dt = 1;
+  late ShapeHitbox hitbox;
 
-  MyPlayer() : super(size: Vector2.all(128));
+  MyPlayer() : super(
+      size: Vector2.all(128),
+  );
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+  }
 
   @override
   Future<void> onLoad() async {
     sprite = await Sprite.load('pip.jpg');
+    hitbox = RectangleHitbox();
+    hitbox.paint = Paint()..color = Color(0x99FF0000);
+    hitbox.renderShape = true;
+    add(hitbox);
+  }
+
+  @override
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints,
+      PositionComponent other,
+      ) {
+    super.onCollisionStart(intersectionPoints, other);
+
+    print('collision');
+    gameRef.score = 0;
+    gameRef.scoreText.text = 'Score: ${gameRef.score}';
   }
 
   @override
   bool onTapDown(TapDownInfo info) {
     print('Tapped!');
-    FlameAudio.play('pip.wav');
+    FlameAudio.playLongAudio('pip.wav');
     velocity.y = -2 / dt;
     return true;
   }
+
+
+}
+
+class TopWall extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks{
+  TopWall() : super(size: Vector2(50, 450));
+  late ShapeHitbox hitbox;
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+  }
+
+  @override
+  Future<void> onLoad() async {
+    sprite = await Sprite.load('pip.jpg');
+    hitbox = RectangleHitbox();
+    hitbox.paint = Paint()..color = Color(0x99FF0000);
+    hitbox.renderShape = true;
+    add(hitbox);
+  }
+
+  @override
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints,
+      PositionComponent other,
+      ) {
+    super.onCollisionStart(intersectionPoints, other);
+
+    print('collision');
+
+  }
+}
+
+
+class BotWall extends SpriteComponent with CollisionCallbacks{
+  BotWall() : super(size: Vector2(50, 450));
+
+  @override
+  Future<void> onLoad() async {
+    sprite = await Sprite.load('pip.jpg');
+  }
+}
+
+class Wall extends PositionComponent {
+  Vector2 velocity = Vector2(0, 0);
+  double dt = 1;
+
+  double topY = -50;
+  double botY = 500;
+  double gap = 0;
+  TopWall topWall = TopWall();
+  TopWall botWall = TopWall();
+
+  Wall() : super();
+
+  @override
+  Future<void>? onLoad() {
+    topWall.position = Vector2(position.x, topY);
+    botWall.position = Vector2(position.x, topY + gap);
+    add(topWall);
+    add(botWall);
+  }
+
 
 
 }
