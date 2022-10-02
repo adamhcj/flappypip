@@ -15,7 +15,11 @@ Turn on sounds! <br>
 
 
 
-https://user-images.githubusercontent.com/82926705/190911626-eb7f0555-c8a1-4b2c-acf4-f09f42313f29.mp4
+https://user-images.githubusercontent.com/82926705/193436021-5cbff0d2-b158-4bfb-add0-366f596db936.mp4
+
+
+
+
 
 
 
@@ -24,7 +28,11 @@ https://user-images.githubusercontent.com/82926705/190911626-eb7f0555-c8a1-4b2c-
 
 ## What it currently is:
 A music button that plays pokemon music (now it is in the form of a piplup button at the top right corner)<br>
+Music button cycles through music.<br>
 Has a piplup sprite that says "piplup!" when you tap it.<br>
 The piplup object has gravity properties and can jump when tapped.<br>
+Score system, every time player passes a wall, score adds by 1.<br>
+Whenever player touches ground or wall, score resets to 0.<br>
+Hitbox painted in red for now
 
 
