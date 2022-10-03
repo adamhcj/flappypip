@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
@@ -17,7 +18,7 @@ class MyGame extends FlameGame with SingleGameInstance, HasTappables, HasCollisi
   Wall wall1 = Wall();
   int score = 0;
 
-  double gravity = 4;
+  double gravity = 10;
   late TextComponent musicText;
   late TextComponent scoreText;
 
@@ -55,7 +56,7 @@ class MyGame extends FlameGame with SingleGameInstance, HasTappables, HasCollisi
     musicBtn musicbtn = musicBtn();
     musicbtn.width = 64;
     musicbtn.height = 64;
-    musicbtn.position = Vector2(size[0] - musicbtn.width, 0);
+    musicbtn.position = Vector2(size[0] - musicbtn.width, 70);
 
     musicBtn.musicText = musicText;
     add(musicbtn);
@@ -80,22 +81,22 @@ class MyGame extends FlameGame with SingleGameInstance, HasTappables, HasCollisi
       if (player.velocity.y > 0) {
         player.velocity.y = 0;
       }
-      player.position.y += player.velocity.y * dt;
+      player.position.y += player.velocity.y * 0.008;
       score = 0;
       scoreText.text = 'Score: $score';
     } else {
       player.velocity.y += gravity;
-      player.position.y += player.velocity.y * dt;
+      player.position.y += player.velocity.y * 0.008;
     }
 
     if (wall1.position.x < -600) {
       wall1.position.x = size[0];
-      int myint = (size.y * 0.5).toInt();
+      int myint = (size.y * 0.3).toInt();
       wall1.position.y =  -100 - Random().nextInt(myint).toDouble();
       score++;
       scoreText.text = 'Score: $score';
     } else {
-      wall1.position.x -= 200 * dt;
+      wall1.position.x -= 200 * 0.008;
 
     }
 
@@ -108,6 +109,7 @@ class MyPlayer extends SpriteComponent with Tappable, HasGameRef<MyGame>, Collis
   Vector2 velocity = Vector2(0, 0);
   double dt = 1;
   late ShapeHitbox hitbox;
+
 
   MyPlayer() : super(
       size: Vector2.all(128),
@@ -142,8 +144,8 @@ class MyPlayer extends SpriteComponent with Tappable, HasGameRef<MyGame>, Collis
   @override
   bool onTapDown(TapDownInfo info) {
     print('Tapped!');
-    FlameAudio.playLongAudio('pip.wav');
-    velocity.y = -2 / dt;
+    AudioPlayer().play(AssetSource('audio/pip.wav'));
+    velocity.y = -3.5 / 0.008;
     return true;
   }
 
