@@ -1,4 +1,8 @@
+import 'dart:convert';
 import 'dart:math';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/collisions.dart';
@@ -9,14 +13,23 @@ import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_audio/flame_audio.dart';
+import 'package:flappypip/main.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:ui' hide TextStyle;
 
+import 'firebase_options.dart';
+
 
 class MyGame extends FlameGame with SingleGameInstance, HasTappables, HasCollisionDetection {
+
+
+  late final ref;
   MyPlayer player = MyPlayer();
   Wall wall1 = Wall();
   int score = 0;
+  String highScoreText = "Highscores!! : \n\n";
+
 
   double gravity = 10;
   late TextComponent musicText;
@@ -31,6 +44,131 @@ class MyGame extends FlameGame with SingleGameInstance, HasTappables, HasCollisi
 
   @override
   Future<void> onLoad() async {
+
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+
+    ref = FirebaseDatabase.instance.ref("highscore");
+
+
+
+
+    // // updating score
+    // await ref.update({
+    //   "1": {
+    //     "name": "changedpiplup",
+    //     "score": 100,
+    //   },
+    // });
+
+    // // initial database population
+    // await ref.set({
+    //   "1": {
+    //     "name": "piplup",
+    //     "score": 0
+    //   },
+    //   "2": {
+    //     "name": "pikachu",
+    //     "score": 0
+    //   },
+    //   "3": {
+    //     "name": "piplup",
+    //     "score": 0,
+    //   },
+    //   "4": {
+    //     "name": "piplup",
+    //     "score": 0,
+    //   },
+    //   "5": {
+    //     "name": "piplup",
+    //     "score": 0,
+    //   },
+    //   "6": {
+    //     "name": "piplup",
+    //     "score": 0,
+    //   },
+    //   "7": {
+    //     "name": "piplup",
+    //     "score": 0,
+    //   },
+    //   "8": {
+    //     "name": "piplup",
+    //     "score": 0,
+    //   },
+    //   "9": {
+    //     "name": "piplup",
+    //     "score": 0,
+    //   },
+    //   "10": {
+    //     "name": "piplup",
+    //     "score": 0,
+    //   },
+    // });
+
+    final snapshot = await ref.get();
+    if (snapshot.exists) {
+      print(snapshot.value);
+    } else {
+      print('No data available.');
+    }
+
+    List<String> scores = [];
+    List<String> names = [];
+    for (var i = 1; i <= 10; i++) {
+      final score = await ref.child(i.toString()+"/score").get();
+      final name = await ref.child(i.toString()+"/name").get();
+
+      scores.add(score.value.toString());
+      names.add(name.value.toString());
+      highScoreText += i.toString() + ".) " + name.value.toString() + " : " + score.value.toString() + "\n";
+    }
+
+    addScore(int highscore) async {
+
+      List<String> scores = [];
+      List<String> names = [];
+      for (var i = 1; i <= 10; i++) {
+        final score = await ref.child(i.toString()+"/score").get();
+        final name = await ref.child(i.toString()+"/name").get();
+
+        scores.add(score.value.toString());
+        names.add(name.value.toString());
+        highScoreText += i.toString() + ".) " + name.value.toString() + " : " + score.value.toString() + "\n";
+      }
+
+      int counter = 1;
+      for (String score in scores) {
+        if (highscore > int.parse(score)) {
+          ref.child(counter.toString()).update({
+            "name": "newname",
+            "score": highscore,
+          });
+
+          for (int i = counter+1; i <= 10; i++) {
+            ref.child((i).toString()).update({
+              "name": names[i-1],
+              "score": scores[i-1],
+            });
+          }
+
+          break;
+
+        }
+        counter++;
+      }
+    }
+
+    TextComponent highScores = TextComponent(text: highScoreText, textRenderer: regular);
+    highScores.x = size[0] / 2;
+    highScores.y = size[1] / 2;
+    highScores.anchor = Anchor.center;
+
+    add(highScores);
+
+
+
+
 
     TextComponent musicText = TextComponent(text: 'Tap the music button (on top right)', textRenderer: regular);
     musicText.x = size[0] / 2;
@@ -82,7 +220,11 @@ class MyGame extends FlameGame with SingleGameInstance, HasTappables, HasCollisi
         player.velocity.y = 0;
       }
       player.position.y += player.velocity.y * 0.008;
-      score = 0;
+      // score = 0;
+
+
+      paused = true;
+      overlays.add('PauseMenu');
       scoreText.text = 'Score: $score';
     } else {
       player.velocity.y += gravity;
@@ -137,8 +279,11 @@ class MyPlayer extends SpriteComponent with Tappable, HasGameRef<MyGame>, Collis
     super.onCollisionStart(intersectionPoints, other);
 
     print('collision');
-    gameRef.score = 0;
+    // gameRef.score = 0;
     gameRef.scoreText.text = 'Score: ${gameRef.score}';
+
+
+    gameRef.paused = true;
   }
 
   @override
@@ -151,6 +296,7 @@ class MyPlayer extends SpriteComponent with Tappable, HasGameRef<MyGame>, Collis
 
 
 }
+
 
 class TopWall extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks{
   TopWall() : super(size: Vector2(50, 450));
@@ -260,7 +406,6 @@ class musicBtn extends SpriteComponent with Tappable{
 }
 
 //insert text at the top
-
 
 
 

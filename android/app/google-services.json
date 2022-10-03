@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "127746487274",
+    "firebase_url": "https://flappypip-cbd1d-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "flappypip-cbd1d",
+    "storage_bucket": "flappypip-cbd1d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:127746487274:android:f6ed296911dfe8abc3f893",
+        "android_client_info": {
+          "package_name": "com.example.flappypip"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "127746487274-u8khpc4i2ubp2sfp3esvnegd1of419f5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-z8CPZX07xtakO9POc5G9Wg7Vd9AyyeI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "127746487274-u8khpc4i2ubp2sfp3esvnegd1of419f5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
