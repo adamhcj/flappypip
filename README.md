@@ -1,12 +1,17 @@
 # flappypip
 
-A new Flutter project. Trying out flutter with flame.
+A new Flutter project. Trying out flutter with flame. Firebase integration with flutter used for highscores!
+<h1>Tech stack: </h1>
+<ol>
+  <li>Flutter</li>
+  <li>Firebase</li>
+</ol>
 
 # Now hosted on my personal github pages! 
 
 # flutter app on webpage takes some time to load, please be patient!
 
-## disclaimer: made game easier and less rage-inducing, so that player is able to explore the music button and play at their own pace (removed death mechanics, instead the score goes down by 1 if player touches the wall. The point is gained back when the wall exits the frame. The only way to get negative points is player colliding with both top and bottom wall per set of walls spawned.)
+### disclaimer: made game easier and less rage-inducing, so that player is able to explore the music button and play at their own pace (removed death mechanics, instead the score goes down by 1 if player touches the wall. The point is gained back when the wall exits the frame. The only way to get negative points is player colliding with both top and bottom wall per set of walls spawned.)
 
 <a href='https://piplupowo.github.io/flappypipweb/'>https://piplupowo.github.io/flappypipweb/</a>
 
