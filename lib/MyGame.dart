@@ -24,16 +24,20 @@ import 'firebase_options.dart';
 class MyGame extends FlameGame with SingleGameInstance, HasTappables, HasCollisionDetection {
 
 
-  late final ref;
+  late var ref;
   MyPlayer player = MyPlayer();
   Wall wall1 = Wall();
   int score = 0;
   String highScoreText = "Highscores!! : \n\n";
 
 
-  double gravity = 10;
+  double gravity = 1000;
   late TextComponent musicText;
   late TextComponent scoreText;
+  late TextComponent highScores;
+
+  List<String> scores = [];
+  List<String> names = [];
 
   final style = TextStyle(color: BasicPalette.white.color);
   final regular = TextPaint(style: TextStyle(color: BasicPalette.red.color, fontSize: 20));
@@ -41,6 +45,25 @@ class MyGame extends FlameGame with SingleGameInstance, HasTappables, HasCollisi
 
   @override
   Color backgroundColor() => const Color(0x5900D9FF);
+
+  updatehighScore() async {
+    ref = FirebaseDatabase.instance.ref("highscore");
+    highScoreText = "Highscores!! : \n\n";
+    scores = [];
+    names = [];
+    for (var i = 1; i <= 10; i++) {
+      final score = await ref.child(i.toString()+"/score").get();
+      final name = await ref.child(i.toString()+"/name").get();
+
+      scores.add(score.value.toString());
+      names.add(name.value.toString());
+      highScoreText += i.toString() + ".) " + name.value.toString() + " : " + score.value.toString() + "\n";
+      print(i.toString());
+      print(highScoreText);
+    }
+    highScores.text = highScoreText;
+    return;
+  }
 
   @override
   Future<void> onLoad() async {
@@ -113,8 +136,7 @@ class MyGame extends FlameGame with SingleGameInstance, HasTappables, HasCollisi
       print('No data available.');
     }
 
-    List<String> scores = [];
-    List<String> names = [];
+
     for (var i = 1; i <= 10; i++) {
       final score = await ref.child(i.toString()+"/score").get();
       final name = await ref.child(i.toString()+"/name").get();
@@ -159,7 +181,7 @@ class MyGame extends FlameGame with SingleGameInstance, HasTappables, HasCollisi
       }
     }
 
-    TextComponent highScores = TextComponent(text: highScoreText, textRenderer: regular);
+    highScores = TextComponent(text: highScoreText, textRenderer: regular);
     highScores.x = size[0] / 2;
     highScores.y = size[1] / 2;
     highScores.anchor = Anchor.center;
@@ -214,21 +236,21 @@ class MyGame extends FlameGame with SingleGameInstance, HasTappables, HasCollisi
   @override
   void update(double dt) {
     super.update(dt);
-    player.dt = dt;
+
     if (player.position.y > size[1] - player.height) {
       if (player.velocity.y > 0) {
         player.velocity.y = 0;
       }
-      player.position.y += player.velocity.y * 0.008;
-      // score = 0;
+      player.position.y += player.velocity.y * dt;
+      // score -= 1;
 
 
-      paused = true;
-      overlays.add('PauseMenu');
+      // paused = true;
+      // overlays.add('PauseMenu');
       scoreText.text = 'Score: $score';
     } else {
-      player.velocity.y += gravity;
-      player.position.y += player.velocity.y * 0.008;
+      player.velocity.y += gravity * dt;
+      player.position.y += player.velocity.y * dt;
     }
 
     if (wall1.position.x < -600) {
@@ -238,7 +260,7 @@ class MyGame extends FlameGame with SingleGameInstance, HasTappables, HasCollisi
       score++;
       scoreText.text = 'Score: $score';
     } else {
-      wall1.position.x -= 200 * 0.008;
+      wall1.position.x -= 250 * dt;
 
     }
 
@@ -249,7 +271,6 @@ class MyGame extends FlameGame with SingleGameInstance, HasTappables, HasCollisi
 
 class MyPlayer extends SpriteComponent with Tappable, HasGameRef<MyGame>, CollisionCallbacks {
   Vector2 velocity = Vector2(0, 0);
-  double dt = 1;
   late ShapeHitbox hitbox;
 
 
@@ -257,10 +278,6 @@ class MyPlayer extends SpriteComponent with Tappable, HasGameRef<MyGame>, Collis
       size: Vector2.all(128),
   );
 
-  @override
-  void update(double dt) {
-    super.update(dt);
-  }
 
   @override
   Future<void> onLoad() async {
@@ -279,18 +296,18 @@ class MyPlayer extends SpriteComponent with Tappable, HasGameRef<MyGame>, Collis
     super.onCollisionStart(intersectionPoints, other);
 
     print('collision');
-    // gameRef.score = 0;
+    gameRef.score -= 1;
     gameRef.scoreText.text = 'Score: ${gameRef.score}';
 
 
-    gameRef.paused = true;
+    // gameRef.paused = true;
   }
 
   @override
   bool onTapDown(TapDownInfo info) {
     print('Tapped!');
-    AudioPlayer().play(AssetSource('audio/pip.wav'));
-    velocity.y = -3.5 / 0.008;
+    FlameAudio.play('pip.wav', volume: .25);
+    velocity.y = -500;
     return true;
   }
 
@@ -380,15 +397,15 @@ class musicBtn extends SpriteComponent with Tappable{
 
     switch (counter) {
       case 0:
-        FlameAudio.bgm.play('diamondpokecenter.wav');
+        FlameAudio.bgm.play('diamondpokecenter.wav', volume: .25);
         musicText.text = 'Current Music: diamondpokecenter.wav\n\nNext Music: diamondroute101.wav\nTap the music button to change to next music';
         break;
       case 1:
-        FlameAudio.bgm.play('diamondroute101.wav');
+        FlameAudio.bgm.play('diamondroute101.wav', volume: .25);
         musicText.text = 'Current Music: diamondroute101.wav\n\nNext Music: diamondstart.wav\nTap the music button to change to next music';
         break;
       case 2:
-        FlameAudio.bgm.play('diamondstart.wav');
+        FlameAudio.bgm.play('diamondstart.wav', volume: .25);
         musicText.text = 'Current Music: diamondstart.wav\n\nNext Music: Silence\nTap the music button to change to next music';
         break;
       case 3:

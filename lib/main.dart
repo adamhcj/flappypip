@@ -1,13 +1,22 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:flappypip/MyGame.dart';
 
+import 'firebase_options.dart';
 
 
 
-void main() {
+
+void main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   final game = MyGame();
 
   Padding sendScore = Padding(
@@ -119,6 +128,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
         // the text that the user has entered into the text field.
         onPressed: () async {
           final ref = game.ref;
+
           addScore(String newname, int highscore) async {
 
             List<String> scores = [];
@@ -129,7 +139,6 @@ class _MyCustomFormState extends State<MyCustomForm> {
 
               scores.add(score.value.toString());
               names.add(name.value.toString());
-              game.highScoreText += i.toString() + ".) " + name.value.toString() + " : " + score.value.toString() + "\n";
             }
 
             int counter = 1;
@@ -153,7 +162,8 @@ class _MyCustomFormState extends State<MyCustomForm> {
               counter++;
             }
           }
-          addScore(myController.text, game.score);
+          await addScore(myController.text, game.score);
+          await game.updatehighScore();
           showDialog(
             context: context,
             builder: (context) {
